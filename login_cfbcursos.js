@@ -1,4 +1,4 @@
-// (150) Disponibilizando Conteudo via CDN - Parte 01 Tela de Login - Parte 10
+// (151) Disponibilizando Conteudo via CDN - Parte 02 Tela de Login - Parte 11 
 
 class Login {
    static logado = false
@@ -10,12 +10,17 @@ class Login {
    static callback_naook = null
    static config = {
       cor: '#048',
-      img: './logo.png'
+      img: './logo.png',
+      endpoint: null, // 'https://login.kakashisuzuki.repl.co/'
    }
-   static endpoint = 'https://login.kakashisuzuki.repl.co/'
    // https://Login.kakashisuzuki.repl.co/?matricula=123&senha=321
 
-   static login = (callback_ok, callback_naook, config = null) => {
+   static login = (callback_ok, callback_naook, config) => {
+      sessionStorage.setItem('logado', 'false')
+      sessionStorage.setItem('matlogado', '')
+      sessionStorage.setItem('nomelogado', '')
+      sessionStorage.setItem('acessologado', '')
+
       if(config !== null) {
          this.config = config
       }
@@ -187,6 +192,10 @@ class Login {
       btn_cancelar.innerHTML = 'cancelar'
 
       btn_cancelar.addEventListener('click', (evt) => {
+         sessionStorage.setItem('logado', 'false')
+         sessionStorage.setItem('matlogado', '')
+         sessionStorage.setItem('nomelogado', '')
+         sessionStorage.setItem('acessologado', '')
          this.fechar()
       })
 
@@ -213,25 +222,25 @@ class Login {
          false
       }*/
       
-      const endpoint = `https://Login.kakashisuzuki.repl.co/?matricula=${mat}&senha=${pass}`
+      const endpoint = `${this.config.endpoint}/?matricula=${mat}&senha=${pass}`
 
       fetch(endpoint)
          .then(res => res.json())
          .then(res => {
-            // console.log(res)
+            //console.log(res)
             if (res) {
-               this.logado = true,
-               this.matlogado = mat,
-               this.nomelogado = res.nome,
-               this.acessologado = res.acesso
+               sessionStorage.setItem('logado', 'true')
+               sessionStorage.setItem('matLogado', mat)
+               sessionStorage.setItem('nomeLogado', res.nome)
+               sessionStorage.setItem('acessoLogado', res.acesso)
                this.callback_ok()
                this.fechar()
             } else {
                // console.log('Usuário não encontrado')
-               this.logado = false,
-               this.matlogado = null,
-               this.nomelogado = null,
-               this.acessologado = null
+               sessionStorage.setItem('logado', 'false')
+               sessionStorage.setItem('matLogado', '')
+               sessionStorage.setItem('nomeLogado', '')
+               sessionStorage.setItem('acessoLogado', '')
                this.callback_naook()
             }
          })
@@ -247,3 +256,39 @@ class Login {
 }
 
 // export { Login }
+
+// Link do repositorio
+// https://github.com/Nickie316/novo-js-cfbcursos/blob/main/login_cfbcursos.js
+
+// Montagem da URL
+// https://cdn.jsdelivr.net/gh/Usuario/NomeArquivo
+
+// Link do arquivo para uso no CDN
+// https://cdn.jsdelivr.net/gh/Nickie316/novo-js-cfbcursos/login_cfbcursos.js
+
+
+// Replit It
+// https://Login.USER.repl.co/?matricula=123&senha=321
+/* let http = require('http')
+let url = require('url')
+
+http.createServer((req, res) => {
+   res.setHeader('Access-Control-Allow-Origin', '*')
+   res.writeHead(200, { 'Content-Type': 'application/json' })
+
+   let parametros = url.parse(req.url, true)
+
+   let mat = parametros.query.matricula
+   let pas = parametros.query.senha
+
+   let dados = null
+
+   if(mat === '123' && pas === '321') {
+      dados = {
+         nome: 'Kaido',
+         accesso: 10
+      }
+   }
+
+   res.end(JSON.stringify(dados))
+}) .listen(8080) */
